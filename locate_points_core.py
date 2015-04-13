@@ -70,7 +70,7 @@ def update_distance(ndict, interval, offset, add_end):
       points, partdist, totaldist = calc_coords(ver, interval, partdist, totaldist)
     if add_end is True:
       endX, endY = ver[-1]
-      dl = partdist + totaldist
+      dl = totaldist - partdist
       points.append({'distance':dl, 'X':endX, 'Y':endY})
     else:
       pass
