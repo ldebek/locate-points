@@ -22,11 +22,11 @@ email=damnback333@gmail.com
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=
+tags=distance, geometry, feature, layers, point, polyline, vector
 
-homepage=
-tracker=
-repository=
+homepage=https://github.com/DamnBack/locate-points
+tracker=https://github.com/DamnBack/locate-points/issues
+repository=https://github.com/DamnBack/locate-points
 category=Plugins
 icon=icon.png
 # experimental flag
@@ -34,4 +34,3 @@ experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-
