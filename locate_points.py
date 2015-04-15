@@ -3,7 +3,7 @@
 /***************************************************************************
  LocatePoints
                                  A QGIS plugin
- Creating points along lines with given offset and interva
+ Creating points along lines with given offset and interval
                               -------------------
         begin                : 2015-03-18
         git sha              : $Format:%H$
