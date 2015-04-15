@@ -56,7 +56,7 @@ def lines2dict(layer, keep_attrs):
 # Updating dictionary with new points:
 def update_distance(ndict, interval, offset, add_end):
   for k in ndict:
-    totaldist = 0
+    totaldist = offset
     partdist = offset
     ver = ndict[k]['ver']
     multi = ndict[k]['multi']
@@ -70,7 +70,7 @@ def update_distance(ndict, interval, offset, add_end):
       points, partdist, totaldist = calc_coords(ver, interval, partdist, totaldist)
     if add_end is True:
       endX, endY = ver[-1]
-      dl = totaldist - partdist
+      dl = totaldist - partdist if totaldist >= partdist else offset - partdist
       points.append({'distance':dl, 'X':endX, 'Y':endY})
     else:
       pass
