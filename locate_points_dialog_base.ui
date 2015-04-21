@@ -36,7 +36,7 @@
     <number>6</number>
    </property>
    <property name="minimum">
-    <double>0.000001000000000</double>
+    <double>0.000000000000000</double>
    </property>
    <property name="maximum">
     <double>1000000.000000000000000</double>
@@ -269,7 +269,7 @@
   <widget class="QCheckBox" name="checkAttrs">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>90</x>
      <y>130</y>
      <width>105</width>
      <height>20</height>
@@ -282,6 +282,24 @@
    </property>
    <property name="text">
     <string>Keep attributes</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkVertices">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>130</y>
+     <width>90</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Add vertices</string>
    </property>
   </widget>
  </widget>
