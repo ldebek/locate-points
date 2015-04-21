@@ -71,12 +71,14 @@ class LocatePointsEngine(object):
       self.totaldist = self.offset
       self.partdist = self.offset
       ver = self.ndict[k]['ver']
-      multi = self.ndict[k]['multi']
-      if multi is True:
+      self.multi = self.ndict[k]['multi']
+      if self.multi is True:
         points = []
+        self.multi = False
         for part in ver:
           part_points = self.calc_coords(part)
           points.extend(part_points)
+          self.multi = True
         ver = ver[-1]
       else:
         points = self.calc_coords(ver)
@@ -94,7 +96,7 @@ class LocatePointsEngine(object):
     iver = iter(ver)
     xl, yl = next(iver)
     xr, yr = next(iver)
-    if self.add_ver is True and self.offset > 0:
+    if self.add_ver is True and (self.offset > 0 or self.multi is True):
       points.append({'distance':self.totaldist - self.partdist, 'X':xl, 'Y':yl})
     else:
       pass
