@@ -10,7 +10,7 @@
 name=Locate points along lines
 qgisMinimumVersion=2.0
 description=Creating points along lines with given offset and interval
-version=0.2
+version=0.2.1
 author=Łukasz Dębek
 email=damnback333@gmail.com
 
@@ -19,7 +19,9 @@ email=damnback333@gmail.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=0.2
+changelog=0.2.1
+ - Fixed "Add vertices" option for MultiPolylines.
+ <p>0.2
  - New "Add vertices" option;
  - Setting interval to 0 will cause adding vertices only (startpoints, endpoints or all vertices - depends on the options checked);
  - Other minor code changes.
