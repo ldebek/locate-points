@@ -10,9 +10,10 @@
 
 With "Locate points along lines" plugin you can:
 
+- create points only on selected polylines
+- define offset and interval parameters
 - choose whether points should inherit attributes from source polylines
 - force adding endpoints of polylines
-- define offset and interval parameters
-- create points only on selected polylines
+- force adding vertices of polylines
 
 The resulting layer is 'memory layer' which you can export to different vector format.
