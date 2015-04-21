@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+##########################################################################################
 """
 /***************************************************************************
  LocatePoints
@@ -20,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+##########################################################################################
 # Import qgis.core functions
 from qgis.core import *
 # Import PyQt4 functions
@@ -29,7 +31,7 @@ from PyQt4.QtGui import QAction, QIcon
 import resources_rc
 # Import the code for the dialog
 from locate_points_dialog import LocatePointsDialog
-from locate_points_core import lines2dict, update_distance, dict2lyr
+from locate_points_core import LocatePointsEngine
 import os.path
 
 class LocatePoints:
@@ -173,6 +175,7 @@ class LocatePoints:
     self.heavyTask = TaskThread()
     self.dlg.inCombo.currentIndexChanged.connect(self.combo_changed)
     self.dlg.outLyr.textChanged.connect(self.line_edit_text_changed)
+    self.dlg.checkVertices.stateChanged.connect(self.checkbox_changed)
     self.dlg.runButton.clicked.connect(self.onStart)
     self.heavyTask.taskFinished.connect(self.onFinished)
 
@@ -194,12 +197,14 @@ class LocatePoints:
     self.dlg.offset.setEnabled(False)
     self.dlg.interval.setEnabled(False)
     self.dlg.checkAttrs.setEnabled(False)
+    self.dlg.checkVertices.setEnabled(False)
     self.dlg.checkEndpoints.setEnabled(False)
     self.heavyTask.inlyr = self.dlg.inCombo.itemData(self.dlg.inCombo.currentIndex())
     self.heavyTask.outlyr = self.dlg.outLyr.text()
     self.heavyTask.offset = self.dlg.offset.value()
     self.heavyTask.interval = self.dlg.interval.value()
     self.heavyTask.keep_attrs = self.dlg.checkAttrs.isChecked()
+    self.heavyTask.add_ver = self.dlg.checkVertices.isChecked()
     self.heavyTask.add_end = self.dlg.checkEndpoints.isChecked()
     self.heavyTask.start()
 
@@ -214,7 +219,11 @@ class LocatePoints:
     self.dlg.offset.setEnabled(True)
     self.dlg.interval.setEnabled(True)
     self.dlg.checkAttrs.setEnabled(True)
-    self.dlg.checkEndpoints.setEnabled(True)
+    self.dlg.checkVertices.setEnabled(True)
+    if self.dlg.checkVertices.isChecked() is False:
+      self.dlg.checkEndpoints.setEnabled(True)
+    else:
+      pass
     QgsMapLayerRegistry.instance().addMapLayer(self.heavyTask.vl)
 
   @pyqtSlot(str)
@@ -240,6 +249,14 @@ class LocatePoints:
     else:
       self.outName = False
       self.dlg.runButton.setEnabled(False)
+  
+  @pyqtSlot(int)
+  def checkbox_changed(self, state):
+    if state == 2:
+      self.dlg.checkEndpoints.setChecked(0)
+      self.dlg.checkEndpoints.setEnabled(False)
+    else:
+      self.dlg.checkEndpoints.setEnabled(True)
 
   def run(self):
     """Run method that performs all the real work"""
@@ -268,14 +285,16 @@ class TaskThread(QThread):
     self.offset = None
     self.interval = None
     self.keep_attrs = None
+    self.add_ver = None
     self.add_end = None
     self.vl = None
   def run(self):
     try:
-      crs = self.inlyr.crs().authid()
-      ndict, flds = lines2dict(self.inlyr, self.keep_attrs)
-      update_distance(ndict, self.interval, self.offset, self.add_end)
-      self.vl = dict2lyr(ndict, flds, crs, self.outlyr)
+      engine = LocatePointsEngine(self.inlyr, self.outlyr, self.offset, self.interval, self.keep_attrs, self.add_ver, self.add_end)
+      engine.retrieve_fields()
+      engine.lines2dict()
+      engine.update_distance()
+      self.vl = engine.dict2lyr()
     except:
       pass
     self.taskFinished.emit()
