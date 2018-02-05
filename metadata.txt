@@ -10,7 +10,8 @@
 name=Locate points along lines
 qgisMinimumVersion=2.0
 qgisMaximumVersion=3.99
-description=Creating points along lines with given offset and interval
+description=Creating points along lines
+about=Creating points along lines with given offset and interval
 version=0.3
 author=Łukasz Dębek
 email=damnback333@gmail.com
