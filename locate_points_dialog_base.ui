@@ -78,7 +78,7 @@
     <double>0.000000000000000</double>
    </property>
   </widget>
-  <widget class="QLineEdit" name="outLyr">
+  <widget class="QLineEdit" name="out_lyr">
    <property name="geometry">
     <rect>
      <x>140</x>
@@ -93,7 +93,7 @@
     </font>
    </property>
   </widget>
-  <widget class="QPushButton" name="runButton">
+  <widget class="QPushButton" name="run_button">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -119,7 +119,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="closeButton">
+  <widget class="QPushButton" name="close_button">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -140,7 +140,7 @@
     <string>Close</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelIn">
+  <widget class="QLabel" name="label_in">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -158,7 +158,7 @@
     <string>Input polyline layer</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelOut">
+  <widget class="QLabel" name="label_out">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -176,7 +176,7 @@
     <string>Output layer name</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelInterval">
+  <widget class="QLabel" name="label_interval">
    <property name="geometry">
     <rect>
      <x>265</x>
@@ -194,7 +194,7 @@
     <string>Interval:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelOffset">
+  <widget class="QLabel" name="label_offset">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -233,7 +233,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QComboBox" name="inCombo">
+  <widget class="QComboBox" name="in_combo">
    <property name="geometry">
     <rect>
      <x>140</x>
@@ -248,7 +248,7 @@
     </font>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkEndpoints">
+  <widget class="QCheckBox" name="check_endpoints">
    <property name="geometry">
     <rect>
      <x>320</x>
@@ -266,7 +266,7 @@
     <string>Add endpoints</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkAttrs">
+  <widget class="QCheckBox" name="check_attrs">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -284,7 +284,7 @@
     <string>Keep attributes</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkVertices">
+  <widget class="QCheckBox" name="check_vertices">
    <property name="geometry">
     <rect>
      <x>220</x>
@@ -306,7 +306,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>closeButton</sender>
+   <sender>close_button</sender>
    <signal>clicked()</signal>
    <receiver>LocatePointsDialogBase</receiver>
    <slot>reject()</slot>

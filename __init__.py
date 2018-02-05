@@ -6,9 +6,8 @@
  Creating points along lines with given offset and interval
                              -------------------
         begin                : 2015-03-18
-        copyright            : (C) 2015 by Łukasz Dębek
+        copyright            : (C) 2018 by Łukasz Dębek
         email                : damnback333@gmail.com
-        git sha              : $Format:%H$
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,12 +23,7 @@
 
 
 # noinspection PyPep8Naming
-def classFactory(iface):  # pylint: disable=invalid-name
-    """Load LocatePoints class from file LocatePoints.
-
-    :param iface: A QGIS interface instance.
-    :type iface: QgsInterface
-    """
-    #
+def classFactory(iface):
+    """Load LocatePoints class from file LocatePoints."""
     from .locate_points import LocatePoints
     return LocatePoints(iface)

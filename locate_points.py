@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##########################################################################################
 """
 /***************************************************************************
  LocatePoints
@@ -7,8 +6,7 @@
  Creating points along lines with given offset and interval
                               -------------------
         begin                : 2015-03-18
-        git sha              : $Format:%H$
-        copyright            : (C) 2015 by Łukasz Dębek
+        copyright            : (C) 2018 by Łukasz Dębek
         email                : damnback333@gmail.com
  ***************************************************************************/
 
@@ -21,31 +19,28 @@
  *                                                                         *
  ***************************************************************************/
 """
-##########################################################################################
-# Import qgis.core functions
-from qgis.core import *
-# Import PyQt4 functions
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QThread, pyqtSignal, pyqtSlot
-from PyQt4.QtGui import QAction, QIcon
-# Initialize Qt resources from file resources.py
-import resources_rc
-# Import the code for the dialog
-from locate_points_dialog import LocatePointsDialog
-from locate_points_core import LocatePointsEngine
+from __future__ import absolute_import
 import os.path
+from qgis.core import QgsProject, QgsMapLayer
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QThread, pyqtSignal
+from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
+from .locate_points_dialog import LocatePointsDialog
+from .locate_points_core import LocatePointsEngine
+
+try:
+    from qgis.core import QgsWkbTypes
+    LINE_GEOM = QgsWkbTypes.LineGeometry
+except ImportError:
+    from qgis.core import QGis, QgsMapLayerRegistry
+    LINE_GEOM = QGis.Line
 
 
 class LocatePoints(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
-        """Constructor.
-
-        :param iface: An interface instance that will be passed to this class
-            which provides the hook by which you can manipulate the QGIS
-            application at run time.
-        :type iface: QgsInterface
-        """
+        """Constructor."""
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -67,26 +62,19 @@ class LocatePoints(object):
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Locate points along lines')
-        # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'LocatePoints')
         self.toolbar.setObjectName(u'LocatePoints')
 
         # Extra attributes
-        self.inName = False
-        self.outName = False
-        self.heavyTask = TaskThread()
+        self.in_name = False
+        self.out_name = False
+        self.heavy_task = TaskThread()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
+        """
+        Get the translation for a string using Qt translation API.
         We implement this ourselves since we do not inherit QObject.
-
-        :param message: String for translation.
-        :type message: str, QString
-
-        :returns: Translated version of message.
-        :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('LocatePoints', message)
@@ -101,46 +89,9 @@ class LocatePoints(object):
         add_to_toolbar=True,
         status_tip=None,
         whats_this=None,
-        parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
-
+        parent=None
+    ):
+        """Add a toolbar icon to the toolbar."""
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -165,17 +116,17 @@ class LocatePoints(object):
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/LocatePoints/icon.png'
+        icon_path = os.path.join(self.plugin_dir, 'icon.png')
         self.add_action(
             icon_path,
             text=self.tr(u'Locate points along lines'),
             callback=self.run,
             parent=self.iface.mainWindow())
-        self.dlg.inCombo.currentIndexChanged.connect(self.combo_changed)
-        self.dlg.outLyr.textChanged.connect(self.line_edit_text_changed)
-        self.dlg.checkVertices.stateChanged.connect(self.checkbox_changed)
-        self.dlg.runButton.clicked.connect(self.onStart)
-        self.heavyTask.taskFinished.connect(self.onFinished)
+        self.dlg.in_combo.currentIndexChanged.connect(self.combo_changed)
+        self.dlg.out_lyr.textChanged.connect(self.line_edit_text_changed)
+        self.dlg.check_vertices.stateChanged.connect(self.checkbox_changed)
+        self.dlg.run_button.clicked.connect(self.on_start)
+        self.heavy_task.task_finished.connect(self.on_finished)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -183,90 +134,91 @@ class LocatePoints(object):
             self.iface.removePluginMenu(self.tr(u'&Locate points along lines'), action)
             self.iface.removeToolBarIcon(action)
 
-    @pyqtSlot()
-    def onStart(self):
-        self.dlg.pbar.setRange(0,0)
-        self.dlg.runButton.setEnabled(False)
-        self.dlg.closeButton.setEnabled(False)
-        self.dlg.inCombo.setEnabled(False)
-        self.dlg.outLyr.setEnabled(False)
+    def on_start(self):
+        self.dlg.pbar.setRange(0, 0)
+        self.dlg.run_button.setEnabled(False)
+        self.dlg.close_button.setEnabled(False)
+        self.dlg.in_combo.setEnabled(False)
+        self.dlg.out_lyr.setEnabled(False)
         self.dlg.offset.setEnabled(False)
         self.dlg.interval.setEnabled(False)
-        self.dlg.checkAttrs.setEnabled(False)
-        self.dlg.checkVertices.setEnabled(False)
-        self.dlg.checkEndpoints.setEnabled(False)
-        self.heavyTask.inlyr = self.dlg.inCombo.itemData(self.dlg.inCombo.currentIndex())
-        self.heavyTask.outlyr = self.dlg.outLyr.text()
-        self.heavyTask.offset = self.dlg.offset.value()
-        self.heavyTask.interval = self.dlg.interval.value()
-        self.heavyTask.keep_attrs = self.dlg.checkAttrs.isChecked()
-        self.heavyTask.add_ver = self.dlg.checkVertices.isChecked()
-        self.heavyTask.add_end = self.dlg.checkEndpoints.isChecked()
-        self.heavyTask.start()
+        self.dlg.check_attrs.setEnabled(False)
+        self.dlg.check_vertices.setEnabled(False)
+        self.dlg.check_endpoints.setEnabled(False)
+        self.heavy_task.inlyr = self.dlg.in_combo.itemData(self.dlg.in_combo.currentIndex())
+        self.heavy_task.outlyr = self.dlg.out_lyr.text()
+        self.heavy_task.offset = self.dlg.offset.value()
+        self.heavy_task.interval = self.dlg.interval.value()
+        self.heavy_task.keep_attrs = self.dlg.check_attrs.isChecked()
+        self.heavy_task.add_ver = self.dlg.check_vertices.isChecked()
+        self.heavy_task.add_end = self.dlg.check_endpoints.isChecked()
+        self.heavy_task.start()
 
-    @pyqtSlot()
-    def onFinished(self):
-        self.dlg.pbar.setRange(0,10)
+    def on_finished(self, error):
+        self.dlg.pbar.setRange(0, 10)
         self.dlg.pbar.setValue(10)
-        self.dlg.runButton.setEnabled(True)
-        self.dlg.closeButton.setEnabled(True)
-        self.dlg.inCombo.setEnabled(True)
-        self.dlg.outLyr.setEnabled(True)
+        self.dlg.run_button.setEnabled(True)
+        self.dlg.close_button.setEnabled(True)
+        self.dlg.in_combo.setEnabled(True)
+        self.dlg.out_lyr.setEnabled(True)
         self.dlg.offset.setEnabled(True)
         self.dlg.interval.setEnabled(True)
-        self.dlg.checkAttrs.setEnabled(True)
-        self.dlg.checkVertices.setEnabled(True)
-        if self.dlg.checkVertices.isChecked() is False:
-            self.dlg.checkEndpoints.setEnabled(True)
+        self.dlg.check_attrs.setEnabled(True)
+        self.dlg.check_vertices.setEnabled(True)
+        if self.dlg.check_vertices.isChecked() is False:
+            self.dlg.check_endpoints.setEnabled(True)
         else:
             pass
-        if self.heavyTask.vl is None:
-            self.iface.messageBar().pushMessage('Error', 'Failed to create points!', level=2)
+        if error:
+            self.iface.messageBar().pushMessage('Failed to create points!', '{}'.format(error), level=2)
         else:
-            QgsMapLayerRegistry.instance().addMapLayer(self.heavyTask.vl)
+            try:
+                QgsProject.instance().addMapLayer(self.heavy_task.vl)
+            except AttributeError:
+                QgsMapLayerRegistry.instance().addMapLayer(self.heavy_task.vl)
 
-    @pyqtSlot(str)
-    def combo_changed(self, text):
-        if text:
-            self.inName = True
-            if self.outName is True:
-                self.dlg.runButton.setEnabled(True)
+    def combo_changed(self, idx):
+        if idx > 0:
+            self.in_name = True
+            if self.out_name is True:
+                self.dlg.run_button.setEnabled(True)
             else:
-                self.dlg.runButton.setEnabled(False)
+                self.dlg.run_button.setEnabled(False)
         else:
-            self.inName = False
-            self.dlg.runButton.setEnabled(False)
+            self.in_name = False
+            self.dlg.run_button.setEnabled(False)
 
-    @pyqtSlot(str)
     def line_edit_text_changed(self, text):
         if text:
-            self.outName = True
-            if self.inName is True:
-                self.dlg.runButton.setEnabled(True)
+            self.out_name = True
+            if self.in_name is True:
+                self.dlg.run_button.setEnabled(True)
             else:
-                self.dlg.runButton.setEnabled(False)
+                self.dlg.run_button.setEnabled(False)
         else:
-            self.outName = False
-            self.dlg.runButton.setEnabled(False)
-    
-    @pyqtSlot(int)
+            self.out_name = False
+            self.dlg.run_button.setEnabled(False)
+
     def checkbox_changed(self, state):
         if state == 2:
-            self.dlg.checkEndpoints.setChecked(0)
-            self.dlg.checkEndpoints.setEnabled(False)
+            self.dlg.check_endpoints.setChecked(0)
+            self.dlg.check_endpoints.setEnabled(False)
         else:
-            self.dlg.checkEndpoints.setEnabled(True)
+            self.dlg.check_endpoints.setEnabled(True)
 
     def run(self):
-        """Run method that performs all the real work"""
-        # show the dialog
+        """Run method that performs all the real work."""
+        # Show the dialog
         self.dlg.show()
-        self.dlg.inCombo.clear()
-        self.dlg.inCombo.addItem(None)
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        self.dlg.in_combo.clear()
+        self.dlg.in_combo.addItem(None)
+        try:
+            layers = list(QgsProject.instance().mapLayers().values())
+        except AttributeError:
+            layers = QgsMapLayerRegistry.instance().mapLayers().values()
         for lyr in layers:
-            if lyr.type() == QgsMapLayer.VectorLayer and lyr.geometryType() == QGis.Line:
-                self.dlg.inCombo.addItem(lyr.name(), lyr)
+            if lyr.type() == QgsMapLayer.VectorLayer and lyr.geometryType() == LINE_GEOM:
+                self.dlg.in_combo.addItem(lyr.name(), lyr)
             else:
                 pass
         # Run the dialog event loop
@@ -274,10 +226,9 @@ class LocatePoints(object):
         self.dlg.pbar.setValue(0)
 
 
-##########################################################################################
-# Extra thread:
 class TaskThread(QThread):
-    taskFinished = pyqtSignal()
+    """Extra thread for handling calculations."""
+    task_finished = pyqtSignal(str)
 
     def __init__(self):
         super(TaskThread, self).__init__()
@@ -291,13 +242,23 @@ class TaskThread(QThread):
         self.vl = None
 
     def run(self):
+        error = ''
         try:
-            engine = LocatePointsEngine(self.inlyr, self.outlyr, self.offset, self.interval, self.keep_attrs, self.add_ver, self.add_end)
+            if self.interval == 0 and self.add_ver == 0 and self.add_end == 0:
+                raise RuntimeError('Invalid set of parameters! Creation of points aborted!')
+            else:
+                pass
+            engine = LocatePointsEngine(self.inlyr,
+                                        self.outlyr,
+                                        self.offset,
+                                        self.interval,
+                                        self.keep_attrs,
+                                        self.add_ver,
+                                        self.add_end)
             engine.lines2dict()
             engine.update_distance()
             self.vl = engine.dict2lyr()
-        except:
-            pass
-        self.taskFinished.emit()
+        except Exception as e:
+            error = str(e)
 
-##########################################################################################
+        self.task_finished.emit(error)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##########################################################################################
 """
 /***************************************************************************
  LocatePoints
@@ -7,8 +6,7 @@
  Class with methods for geometry and attributes processing
                               -------------------
         begin                : 2015-03-18
-        git sha              : $Format:%H$
-        copyright            : (C) 2015 by Łukasz Dębek
+        copyright            : (C) 2018 by Łukasz Dębek
         email                : damnback333@gmail.com
  ***************************************************************************/
 
@@ -21,19 +19,30 @@
  *                                                                         *
  ***************************************************************************/
 """
-##########################################################################################
 import math
-from qgis.core import *
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
+from qgis.core import QgsField, QgsVectorLayer, QgsFeature, QgsGeometry
+
+try:
+    from qgis.core import QgsPointXY
+
+    def point_geometry(x, y):
+        return QgsGeometry.fromPointXY(QgsPointXY(x, y))
+
+except ImportError:
+    from qgis.core import QgsPoint
+
+    def point_geometry(x, y):
+        return QgsGeometry.fromPoint(QgsPoint(x, y))
 
 
-# Class for polylines processing:
 class LocatePointsEngine(object):
+    """Class for polylines processing."""
     def __init__(self, layer, outname, offset, interval, keep_attrs, add_ver, add_end):
         self.layer = layer
         self.outname = outname
         self.offset = offset
-        self.interval = interval if interval > 0 else 1000000000
+        self.interval = interval if interval > 0 else 10**24
         self.keep_attrs = keep_attrs
         self.add_ver = add_ver
         self.add_end = add_end
@@ -86,9 +95,9 @@ class LocatePointsEngine(object):
             else:
                 points = self.calc_coords(ver)
             if self.add_end is True:
-                endX, endY = ver[-1]
+                end_x, end_y = ver[-1]
                 dl = self.totaldist - self.partdist if self.totaldist >= self.partdist else self.offset - self.partdist
-                points.append({'distance': dl, 'X': endX, 'Y': endY})
+                points.append({'distance': dl, 'X': end_x, 'Y': end_y})
             else:
                 pass
             self.ndict[k]['points'] = points
@@ -141,11 +150,9 @@ class LocatePointsEngine(object):
             for points in self.ndict[k]['points']:
                 distance = points['distance']
                 elem = QgsFeature()
-                elem.setGeometry(QgsGeometry.fromPoint(QgsPoint(points['X'], points['Y'])))
+                elem.setGeometry(point_geometry(points['X'], points['Y']))
                 elem.setAttributes(cs + [distance])
                 vl.addFeature(elem)
         vl.updateExtents()
         vl.commitChanges()
         return vl
-
-##########################################################################################

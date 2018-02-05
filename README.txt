@@ -3,7 +3,7 @@
                                  A QGIS plugin
  Creating points along lines with given offset and interval
                               -------------------
-        copyright            : (C) 2015 by Łukasz Dębek
+        copyright            : (C) 2018 by Łukasz Dębek
         email                : damnback333@gmail.com
 ***************************************************************************
 "Locate points along lines" is simple tool for creating points along lines with given offset and interval.

@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/LocatePoints" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>
