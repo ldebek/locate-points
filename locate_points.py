@@ -208,7 +208,6 @@ class LocatePoints(object):
 
     def run(self):
         """Run method that performs all the real work."""
-        # Show the dialog
         self.dlg.show()
         self.dlg.in_combo.clear()
         self.dlg.in_combo.addItem(None)
@@ -221,7 +220,6 @@ class LocatePoints(object):
                 self.dlg.in_combo.addItem(lyr.name(), lyr)
             else:
                 pass
-        # Run the dialog event loop
         self.dlg.exec_()
         self.dlg.pbar.setValue(0)
 

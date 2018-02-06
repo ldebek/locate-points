@@ -21,7 +21,6 @@
 """
 
 import os
-
 from qgis.PyQt import QtWidgets, uic
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

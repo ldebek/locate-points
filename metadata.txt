@@ -12,7 +12,7 @@ qgisMinimumVersion=2.0
 qgisMaximumVersion=3.99
 description=Creating points along lines
 about=Creating points along lines with given offset and interval
-version=0.3
+version=0.3.1
 author=Łukasz Dębek
 email=damnback333@gmail.com
 
@@ -21,20 +21,10 @@ email=damnback333@gmail.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=0.3
+changelog=0.3.1
+ - Fixed GUI issues.
+ <p>0.3
  - Added support for QGIS 3.
- <p>0.2.2
- - Few code rearrangements and optimizations.
- <p>0.2.1
- - Fixed "Add vertices" option for MultiPolylines.
- <p>0.2
- - New "Add vertices" option;
- - Setting interval to 0 will cause adding vertices only (start points, end points or all vertices - depends on the options checked);
- - Other minor code changes.
- <p>0.1.2
- - Fixed distance values for endpoints when offset is greater than line length and 'Add endpoints' flag is checked.
- <p>0.1.1
- - Fixed distance calculations for endpoints.
 # Tags are comma separated with spaces allowed
 tags=distance, geometry, feature, layers, point, polyline, vector
 

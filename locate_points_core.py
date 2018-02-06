@@ -57,7 +57,7 @@ class LocatePointsEngine(object):
         self.flds.append(QgsField('org_fid', QVariant.Int))
         self.flds.append(QgsField('distance', QVariant.Double))
 
-    # Extracting polylines geometry and attributes to dictionary:
+    # Extracting polylines geometry and attributes to dictionary
     def lines2dict(self):
         if self.keep_attrs is True:
             def row_attrs(row): return row.attributes()
@@ -77,7 +77,7 @@ class LocatePointsEngine(object):
                 vertices = geom.asPolyline()
             self.ndict[k] = {'attrs': attrs, 'ver': vertices, 'multi': multi}
 
-    # Updating dictionary with new points:
+    # Updating dictionary with new points
     def update_distance(self):
         for k in self.ndict:
             self.totaldist = self.offset
@@ -102,16 +102,18 @@ class LocatePointsEngine(object):
                 pass
             self.ndict[k]['points'] = points
 
-    # Calculating coordinates of points along lines:
+    # Calculating coordinates of points along lines
     def calc_coords(self, ver):
         points = []
         iver = iter(ver)
         xl, yl = next(iver)
         xr, yr = next(iver)
+
         if self.add_ver is True and (self.offset > 0 or self.multi is True):
             points.append({'distance': self.totaldist - self.partdist, 'X': xl, 'Y': yl})
         else:
             pass
+
         while True:
             dx = xr - xl
             dy = yr - yl
@@ -136,15 +138,13 @@ class LocatePointsEngine(object):
                 xr, yr = next(iver)
             except StopIteration:
                 break
+
         return points
 
-    # Converting dictionary to QgsVectorLayer:
+    # Converting dictionary to QgsVectorLayer
     def dict2lyr(self):
-        crs = self.layer.crs().authid()
-        vl = QgsVectorLayer('Point?crs={0}'.format(crs), self.outname, 'memory')
-        pr = vl.dataProvider()
-        pr.addAttributes(self.flds)
-        vl.startEditing()
+        new_feats = []
+
         for k in self.ndict:
             cs = self.ndict[k]['attrs']
             for points in self.ndict[k]['points']:
@@ -152,7 +152,15 @@ class LocatePointsEngine(object):
                 elem = QgsFeature()
                 elem.setGeometry(point_geometry(points['X'], points['Y']))
                 elem.setAttributes(cs + [distance])
-                vl.addFeature(elem)
+                new_feats.append(elem)
+
+        crs = self.layer.crs().authid()
+        vl = QgsVectorLayer('Point?crs={0}'.format(crs), self.outname, 'memory')
+        pr = vl.dataProvider()
+        pr.addAttributes(self.flds)
+        vl.startEditing()
+        vl.addFeatures(new_feats)
         vl.updateExtents()
         vl.commitChanges()
+
         return vl
