@@ -162,5 +162,6 @@ class LocatePointsEngine(object):
         vl.addFeatures(new_feats)
         vl.updateExtents()
         vl.commitChanges()
+        vl.removeSelection()
 
         return vl
