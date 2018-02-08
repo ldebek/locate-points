@@ -54,13 +54,14 @@ class LocatePointsEngine(object):
             self.flds = self.layer.dataProvider().fields().toList()
         else:
             self.flds = []
+        self.field_names = [fld.name() for fld in self.flds]
         self.flds.append(QgsField('org_fid', QVariant.Int))
         self.flds.append(QgsField('distance', QVariant.Double))
 
     # Extracting polylines geometry and attributes to dictionary
     def lines2dict(self):
         if self.keep_attrs is True:
-            def row_attrs(row): return row.attributes()
+            def row_attrs(row): return [row[field_name] for field_name in self.field_names]
         else:
             def row_attrs(row): return []
         fc = self.layer.selectedFeatures() if self.layer.selectedFeatureCount() > 0 else self.layer.getFeatures()
@@ -94,12 +95,11 @@ class LocatePointsEngine(object):
                 ver = ver[-1]
             else:
                 points = self.calc_coords(ver)
+
             if self.add_end is True:
                 end_x, end_y = ver[-1]
                 dl = self.totaldist - self.partdist if self.totaldist >= self.partdist else self.offset - self.partdist
                 points.append({'distance': dl, 'X': end_x, 'Y': end_y})
-            else:
-                pass
             self.ndict[k]['points'] = points
 
     # Calculating coordinates of points along lines
@@ -111,8 +111,6 @@ class LocatePointsEngine(object):
 
         if self.add_ver is True and (self.offset > 0 or self.multi is True):
             points.append({'distance': self.totaldist - self.partdist, 'X': xl, 'Y': yl})
-        else:
-            pass
 
         while True:
             dx = xr - xl
@@ -131,8 +129,6 @@ class LocatePointsEngine(object):
             self.partdist = abs(leftdist)
             if self.add_ver is True:
                 points.append({'distance': self.totaldist - self.partdist, 'X': xr, 'Y': yr})
-            else:
-                pass
             try:
                 xl, yl = xr, yr
                 xr, yr = next(iver)
@@ -144,7 +140,6 @@ class LocatePointsEngine(object):
     # Converting dictionary to QgsVectorLayer
     def dict2lyr(self):
         new_feats = []
-
         for k in self.ndict:
             cs = self.ndict[k]['attrs']
             for points in self.ndict[k]['points']:
