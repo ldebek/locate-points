@@ -42,7 +42,7 @@ class LocatePointsEngine(object):
         self.layer = layer
         self.outname = outname
         self.offset = offset
-        self.interval = interval if interval > 0 else 10**24
+        self.interval = interval if interval > 0 else 10**12
         self.keep_attrs = keep_attrs
         self.add_ver = add_ver
         self.add_end = add_end

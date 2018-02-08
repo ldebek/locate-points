@@ -22,7 +22,6 @@
 import os
 from qgis.PyQt import QtWidgets, uic
 from qgis.core import QgsProject
-from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import QObject, QThread, pyqtSignal
 from .locate_points_core import LocatePointsEngine
 
@@ -37,9 +36,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class LocatePointsDialog(QtWidgets.QDialog, FORM_CLASS):
     """Plugin main dialog."""
-    def __init__(self, parent=None):
+    def __init__(self, iface,  parent=None):
         super(LocatePointsDialog, self).__init__(parent)
         self.setupUi(self)
+        self.iface = iface
         self.in_combo.currentIndexChanged.connect(self.combo_changed)
         self.out_lyr.textChanged.connect(self.line_edit_text_changed)
         self.check_vertices.stateChanged.connect(self.checkbox_changed)
@@ -102,9 +102,7 @@ class LocatePointsDialog(QtWidgets.QDialog, FORM_CLASS):
             self.check_endpoints.setEnabled(True)
 
         if error:
-            self.iface.messageBar().pushMessage(
-                'Failed to create points!', '{}'.format(error),
-                level=QgsMessageBar.CRITICAL)
+            self.iface.messageBar().pushMessage('Failed to create points!', '{}'.format(error),  level=2)
         else:
             try:
                 QgsProject.instance().addMapLayer(vl)

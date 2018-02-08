@@ -50,7 +50,7 @@ class LocatePoints(object):
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
-        self.dlg = LocatePointsDialog()
+        self.dlg = LocatePointsDialog(self.iface)
 
         self.actions = []
         self.menu = self.tr(u'&Locate points along lines')
