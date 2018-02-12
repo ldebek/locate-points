@@ -12,7 +12,7 @@ qgisMinimumVersion=2.0
 qgisMaximumVersion=3.99
 description=Creating points along lines
 about=Creating points along lines with given offset and interval
-version=0.3.2
+version=0.3.3
 author=Łukasz Dębek
 email=damnback333@gmail.com
 
@@ -21,7 +21,9 @@ email=damnback333@gmail.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=0.3.2
+changelog=0.3.3
+ - Improved user communication.
+ <p>0.3.2
  - Fixed bug with empty layers creation.
  - Code cleanups and rearrangements.
  <p>0.3.1

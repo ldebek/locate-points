@@ -120,7 +120,6 @@ class LocatePoints(object):
     def run(self):
         """Run method that performs all the real work."""
         self.dlg.pbar.setValue(0)
-        self.dlg.show()
         self.dlg.in_combo.clear()
         self.dlg.in_combo.addItem(None)
 
@@ -133,4 +132,5 @@ class LocatePoints(object):
             if lyr.type() == QgsMapLayer.VectorLayer and lyr.geometryType() == LINE_GEOM:
                 self.dlg.in_combo.addItem(lyr.name(), lyr)
 
+        self.dlg.show()
         self.dlg.exec_()
