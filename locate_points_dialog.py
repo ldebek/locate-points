@@ -35,7 +35,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class LocatePointsDialog(QtWidgets.QDialog, FORM_CLASS):
-    """Plugin main dialog."""
+    """Main dialog."""
     def __init__(self, iface,  parent=None):
         super(LocatePointsDialog, self).__init__(parent)
         self.setupUi(self)
@@ -74,7 +74,7 @@ class LocatePointsDialog(QtWidgets.QDialog, FORM_CLASS):
         add_end = self.check_endpoints.isChecked()
 
         self.worker = Worker(inlyr, outlyr, offset, interval, keep_attrs, add_ver, add_end)
-        self.thread = QThread(self)
+        self.thread = QThread()
         self.worker.moveToThread(self.thread)
         self.worker.finished.connect(self.on_finished)
         self.thread.started.connect(self.worker.run)
@@ -102,12 +102,13 @@ class LocatePointsDialog(QtWidgets.QDialog, FORM_CLASS):
             self.check_endpoints.setEnabled(True)
 
         if error:
-            self.iface.messageBar().pushMessage('Failed to create points!', '{}'.format(error),  level=2)
+            self.iface.messageBar().pushMessage('Failed to create points', '{}'.format(error), level=1)
         else:
             try:
                 QgsProject.instance().addMapLayer(vl)
             except AttributeError:
                 QgsMapLayerRegistry.instance().addMapLayer(vl)
+            self.iface.messageBar().pushMessage('Calculations finished', 'Points successfully created!', level=0)
 
     def combo_changed(self, idx):
         if idx > 0:
@@ -158,7 +159,7 @@ class Worker(QObject):
         error = ''
         try:
             if self.interval == 0 and self.add_ver == 0 and self.add_end == 0:
-                raise RuntimeError('Invalid set of parameters! Creation of points aborted!')
+                raise RuntimeError('Invalid set of parameters - creation of points aborted!')
 
             engine = LocatePointsEngine(self.inlyr,
                                         self.outlyr,

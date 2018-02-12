@@ -19,7 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import math
+from math import sqrt
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsField, QgsVectorLayer, QgsFeature, QgsGeometry
 
@@ -51,7 +51,7 @@ class LocatePointsEngine(object):
         self.partdist = None
         self.multi = None
         if self.keep_attrs is True:
-            self.flds = self.layer.dataProvider().fields().toList()
+            self.flds = self.layer.fields().toList()
         else:
             self.flds = []
         self.field_names = [fld.name() for fld in self.flds]
@@ -115,7 +115,7 @@ class LocatePointsEngine(object):
         while True:
             dx = xr - xl
             dy = yr - yl
-            dl = math.sqrt(dx**2 + dy**2)
+            dl = sqrt(dx**2 + dy**2)
             leftdist = dl - self.partdist
             while leftdist >= 0:
                 pnt = {'distance': self.totaldist}

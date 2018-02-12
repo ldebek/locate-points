@@ -48,6 +48,7 @@ class LocatePoints(object):
             self.translator.load(locale_path)
 
             if qVersion() > '4.3.3':
+                # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
                 QCoreApplication.installTranslator(self.translator)
 
         self.dlg = LocatePointsDialog(self.iface)
@@ -77,7 +78,7 @@ class LocatePoints(object):
         status_tip=None,
         whats_this=None,
         parent=None
-):
+    ):
         """Add a toolbar icon to the toolbar."""
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -100,6 +101,7 @@ class LocatePoints(object):
 
         return action
 
+    # noinspection PyPep8Naming
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         icon_path = os.path.join(self.plugin_dir, 'icon.png')
@@ -117,6 +119,7 @@ class LocatePoints(object):
 
     def run(self):
         """Run method that performs all the real work."""
+        self.dlg.pbar.setValue(0)
         self.dlg.show()
         self.dlg.in_combo.clear()
         self.dlg.in_combo.addItem(None)
@@ -131,4 +134,3 @@ class LocatePoints(object):
                 self.dlg.in_combo.addItem(lyr.name(), lyr)
 
         self.dlg.exec_()
-        self.dlg.pbar.setValue(0)
