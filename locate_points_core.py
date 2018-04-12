@@ -158,5 +158,4 @@ class LocatePointsEngine(object):
         vl.updateExtents()
         vl.commitChanges()
         vl.removeSelection()
-
         return vl

@@ -21,7 +21,7 @@
 """
 import os
 from qgis.PyQt import QtWidgets, uic
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsUnitTypes
 from qgis.PyQt.QtCore import QObject, QThread, pyqtSignal
 from .locate_points_core import LocatePointsEngine
 
@@ -112,12 +112,18 @@ class LocatePointsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def combo_changed(self, idx):
         if idx > 0:
+            crs = self.in_combo.itemData(self.in_combo.currentIndex()).crs()
+            units = QgsUnitTypes.toString(crs.mapUnits())
+            self.offset.setToolTip('Offset value ({})'.format(units))
+            self.interval.setToolTip('Interval value ({})'.format(units))
             self.in_name = True
             if self.out_name is True:
                 self.run_button.setEnabled(True)
             else:
                 self.run_button.setEnabled(False)
         else:
+            self.offset.setToolTip('')
+            self.interval.setToolTip('')
             self.in_name = False
             self.run_button.setEnabled(False)
 

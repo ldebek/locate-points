@@ -8,11 +8,11 @@
 
 [general]
 name=Locate points along lines
-qgisMinimumVersion=2.0
+qgisMinimumVersion=2.14
 qgisMaximumVersion=3.99
 description=Creating points along lines
 about=Creating points along lines with given offset and interval
-version=0.3.3
+version=0.3.4
 author=Łukasz Dębek
 email=damnback333@gmail.com
 
@@ -21,7 +21,9 @@ email=damnback333@gmail.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=0.3.3
+changelog=0.3.4
+ - Added tool tip balloons with information about layer distance units.
+ <p>0.3.3
  - Improved user communication.
  <p>0.3.2
  - Fixed bug with empty layers creation.

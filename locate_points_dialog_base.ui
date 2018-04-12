@@ -131,7 +131,7 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>Offset value (project units)</string>
+      <string/>
      </property>
      <property name="decimals">
       <number>6</number>
@@ -269,7 +269,7 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>Interval value (project units)</string>
+      <string/>
      </property>
      <property name="decimals">
       <number>6</number>
