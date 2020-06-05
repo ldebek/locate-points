@@ -4,7 +4,7 @@
  Creating points along lines with given offset and interval
                               -------------------
         copyright            : (C) 2018 by Łukasz Dębek
-        email                : damnback333@gmail.com
+        email                : ldebek@interia.pl
 ***************************************************************************
 "Locate points along lines" is simple tool for creating points along lines with given offset and interval.
 

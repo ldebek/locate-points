@@ -14,7 +14,7 @@ description=Creating points along lines
 about=Creating points along lines with given offset and interval
 version=0.3.4
 author=Łukasz Dębek
-email=damnback333@gmail.com
+email=ldebek@interia.pl
 
 # End of mandatory metadata
 
