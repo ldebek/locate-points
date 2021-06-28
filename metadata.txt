@@ -35,9 +35,9 @@ changelog=0.3.4
 # Tags are comma separated with spaces allowed
 tags=distance, geometry, feature, layers, point, polyline, vector
 
-homepage=https://github.com/DamnBack/locate-points
-tracker=https://github.com/DamnBack/locate-points/issues
-repository=https://github.com/DamnBack/locate-points
+homepage=https://github.com/ldebek/locate-points
+tracker=https://github.com/ldebek/locate-points/issues
+repository=https://github.com/ldebek/locate-points
 category=Plugins
 icon=icon.png
 # experimental flag
