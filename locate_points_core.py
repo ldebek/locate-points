@@ -117,7 +117,7 @@ class LocatePointsEngine(object):
             dy = yr - yl
             dl = sqrt(dx**2 + dy**2)
             leftdist = dl - self.partdist
-            while leftdist >= 0:
+            while leftdist >= 0 and dl > 0:
                 pnt = {'distance': self.totaldist}
                 coef = self.partdist / dl
                 pnt['X'] = (1 - coef) * xl + coef * xr
